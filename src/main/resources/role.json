@@ -1,0 +1,9 @@
+{
+  "id": "admin",
+  "name": "管理员",
+  "describe": "拥有所有权限",
+  "status": 1,
+  "creatorId": "system",
+  "createTime": 1497160610259,
+  "deleted": 0
+}

@@ -1,0 +1,24 @@
+spring:
+  # 数据源
+  datasource:
+    username: root
+    password: 1q1w1e1r
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.43.3/mock?rewriteBatchedStatements=true&useUnicode=true&zeroDateTimeBehavior=convertToNull&autoReconnect=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false
+    hikari:
+      maximum-pool-size: 2
+      minimum-idle: 2
+# mybatis-plus 配置
+mybatis-plus:
+  global-config:
+    banner: true
+    db-config:
+      id-type: assign_id
+      logic-delete-value: -1
+      logic-not-delete-value: 1
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+# 日志
+logging:
+  level:
+    cn.zaink.mock3: trace
