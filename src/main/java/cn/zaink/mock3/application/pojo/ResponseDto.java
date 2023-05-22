@@ -27,19 +27,21 @@ public class ResponseDto extends BasePojo {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     @NotBlank
-    private String content;
+    private String name;
     @NotBlank
-    private Integer statusCode;
+    private Integer httpStatus;
+
+    @ApiModelProperty(value = "状态", notes = "1-当前生效")
     @NotBlank
-    private Integer main;
+    private Integer status;
 
     private String description;
 
     private String customHeader;
 
     @NotBlank
-    @ApiModelProperty(value = "http方法", allowableValues = "GET,POST,DELETE,PUT,HEAD",required = true)
-    private String method;
+    @ApiModelProperty(value = "http方法", allowableValues = "GET,POST,DELETE,PUT,HEAD", required = true)
+    private String httpMethod;
 
     private String remark;
 }

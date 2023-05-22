@@ -25,19 +25,27 @@ public class ResponseController {
     }
 
     @ApiOperation("列表")
-    @GetMapping("/list")
+    @GetMapping
     public Result<IPage<ResponseDto>> list(UrlQry req) {
         return Result.ok(responseService.find(req));
     }
 
     @ApiOperation("新增")
-    @PostMapping("/create")
+    @PostMapping
     public Result<Boolean> create(@RequestBody ResponseDto req) {
         return Result.ok(responseService.create(req));
     }
 
+    @ApiOperation("修改")
+    @PutMapping("/{id}")
+    public Result<Boolean> update(
+            @PathVariable Long id,
+            @RequestBody ResponseDto req) {
+        return Result.ok(true);
+    }
+
     @ApiOperation("查看详情")
-    @GetMapping("/detail")
+    @GetMapping("/{id}")
     public Result<ResponseDto> detail(@ApiParam(value = "id", required = true) @RequestParam("id") Long id) {
         return Result.ok(responseService.detail(id));
     }

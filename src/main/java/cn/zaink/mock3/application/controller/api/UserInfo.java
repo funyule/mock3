@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-
 /**
  * @author zaink
  **/
@@ -30,4 +28,6 @@ public class UserInfo {
     private Integer deleted;
     private String roleId;
     private Role role;
+
+    private String token;
 }

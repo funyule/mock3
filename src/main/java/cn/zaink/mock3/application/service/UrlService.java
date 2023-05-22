@@ -10,7 +10,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 public interface UrlService {
     IPage<MockUrlDto> find(UrlQry urlQry);
 
-    Boolean create(MockUrlDto mockUrl);
+    Long create(MockUrlDto mockUrl);
 
     MockUrlDto detail(Long id);
+
+    Boolean delete(Long id);
+
+    Boolean update(MockUrlDto mockUrl);
 }

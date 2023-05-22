@@ -30,7 +30,7 @@ import java.nio.charset.Charset;
  **/
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@WebFilter(value = "/mock/*", filterName = "MockFilter")
+@WebFilter(value = "/fake/*", filterName = "MockFilter")
 public class MockFilter implements Filter {
 
     private final ObjectMapper objectMapper;
@@ -52,7 +52,7 @@ public class MockFilter implements Filter {
         response.setCharacterEncoding("UTF-8");
 
         String requestUriWithPrefix = request.getRequestURI();
-        String requestUri = StrUtil.blankToDefault(StrUtil.removePrefix(requestUriWithPrefix, "/mock"), StrUtil.SLASH);
+        String requestUri = StrUtil.blankToDefault(StrUtil.removePrefix(requestUriWithPrefix, "/fake"), StrUtil.SLASH);
         String accept = ServletUtil.getHeader(request, Header.ACCEPT.name(), Charset.defaultCharset());
         if (log.isTraceEnabled()) {
             log.trace("requestUri: {}, accept: {}", requestUri, accept);

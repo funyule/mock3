@@ -1,9 +1,11 @@
 package cn.zaink.mock3.application.service.impl;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import cn.zaink.mock3.application.pojo.MockUrlDto;
 import cn.zaink.mock3.application.pojo.UrlQry;
 import cn.zaink.mock3.application.service.UrlService;
+import cn.zaink.mock3.core.exception.BizException;
 import cn.zaink.mock3.infrastructure.domain.MockUrl;
 import cn.zaink.mock3.infrastructure.domain.MockUrlLogic;
 import cn.zaink.mock3.infrastructure.service.MockUrlLogicService;
@@ -43,6 +45,7 @@ public class UrlServiceImpl implements UrlService {
                 .like(StrUtil.isNotBlank(mockUrl.getDescription()), MockUrl::getDescription, mockUrl.getDescription())
                 .orderByDesc(MockUrl::getCreateTime);
         Page<MockUrl> page = new Page<>(mockUrl.getCurrent(), mockUrl.getSize());
+        page.setSearchCount(true);
         return mockUrlService.page(page, queryWrapper)
                 .convert(po2dto);
     }
@@ -57,7 +60,7 @@ public class UrlServiceImpl implements UrlService {
 
     @Transactional(rollbackFor = Throwable.class)
     @Override
-    public Boolean create(MockUrlDto req) {
+    public Long create(MockUrlDto req) {
         String reqUrl = req.getUrl();
         String formatUrlStr = formatUrlStr(reqUrl);
         MockUrlLogic logUrl = createLogUrl(formatUrlStr);
@@ -69,7 +72,8 @@ public class UrlServiceImpl implements UrlService {
                 .description(req.getDescription())
                 .createTime(LocalDateTime.now())
                 .build();
-        return mockUrlService.save(mockUrl);
+        mockUrlService.save(mockUrl);
+        return mockUrl.getId();
     }
 
     private String formatUrlStr(String url) {
@@ -108,5 +112,22 @@ public class UrlServiceImpl implements UrlService {
     public MockUrlDto detail(Long id) {
         MockUrl mockUrl = mockUrlService.getById(id);
         return null == mockUrl ? null : po2dto.apply(mockUrl);
+    }
+
+    @Transactional(rollbackFor = Throwable.class)
+    @Override
+    public Boolean delete(Long id) {
+        MockUrl mockUrl = mockUrlService.getById(id);
+        Assert.notNull(mockUrl, () -> new BizException("Url不存在"));
+        if (null != mockUrl.getLogic()) {
+            mockUrlLogicService.remove(Wrappers.<MockUrlLogic>lambdaQuery()
+                    .eq(MockUrlLogic::getLogicId, mockUrl.getLogic()));
+        }
+        return mockUrlService.removeById(id);
+    }
+
+    @Override
+    public Boolean update(MockUrlDto mockUrl) {
+        return false;
     }
 }

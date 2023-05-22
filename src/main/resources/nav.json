@@ -90,22 +90,44 @@
       "title": "Mock服务",
       "show": true
     },
-    "redirect": "/mock/api-list",
+    "redirect": "/mock/url-list",
     "component": "RouteView"
   },
   {
-    "name": "api-list",
+    "name": "url-list",
     "parentId": 90010,
     "id": 90011,
-    "path": "/mock/api-list/:pageNo([1-9]\\d*)?",
+    "path": "/mock/url-list/:pageNo([1-9]\\d*)?",
     "meta": {
       "title": "MockApi列表",
       "show": true
     },
-    "component": "ApiList"
+    "component": "UrlList"
   },
   {
-    "name": "api-log-list",
+    "name": "url-response-list",
+    "parentId": 90010,
+    "id": 90014,
+    "path": "/mock/url-response-list/:pageNo([1-9]\\d*)?",
+    "meta": {
+      "title": "MockApiResponse列表",
+      "show": true
+    },
+    "component": "UrlReponseList"
+  },
+  {
+    "name": "module-list",
+    "parentId": 90010,
+    "id": 90013,
+    "path": "/mock/api-module/:pageNo([1-9]\\d*)?",
+    "meta": {
+      "title": "模块列表",
+      "show": true
+    },
+    "component": "ModuleList"
+  },
+  {
+    "name": "url-log-list",
     "parentId": 90010,
     "id": 90012,
     "meta": {

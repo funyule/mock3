@@ -37,20 +37,14 @@ public class ResponseServiceImpl implements ResponseService {
                 .convert(po2dto);
     }
 
-    @Override
-    public Boolean create(ResponseDto req) {
-        MockResponse response = MockResponse.builder()
-                .id(IdWorker.getId())
-                .customHeader(req.getCustomHeader())
-                .content(req.getContent())
-                .description(req.getDescription())
-                .main(req.getMain())
-                .statusCode(req.getStatusCode())
-                .method(req.getMethod())
-                .remark(req.getRemark())
-                .build();
-        return mockResponseService.save(response);
-    }
+    private final Function<MockResponse, ResponseDto> po2dto = r -> ResponseDto.builder()
+            .id(r.getId()).description(r.getDescription())
+            .createBy(r.getCreateBy()).createTime(r.getCreateTime())
+            .updateBy(r.getUpdateBy()).updateTime(r.getUpdateTime())
+            .name(r.getContent()).status(r.getMain())
+            .httpMethod(r.getMethod()).remark(r.getRemark())
+            .httpStatus(r.getStatusCode()).customHeader(r.getCustomHeader())
+            .build();
 
     @Override
     public ResponseDto detail(Long id) {
@@ -58,13 +52,19 @@ public class ResponseServiceImpl implements ResponseService {
         return null == mockResponse ? null : po2dto.apply(mockResponse);
     }
 
-    private final Function<MockResponse, ResponseDto> po2dto = r -> ResponseDto.builder()
-            .id(r.getId()).description(r.getDescription())
-            .createBy(r.getCreateBy()).createTime(r.getCreateTime())
-            .updateBy(r.getUpdateBy()).updateTime(r.getUpdateTime())
-            .content(r.getContent()).main(r.getMain())
-            .method(r.getMethod()).remark(r.getRemark())
-            .statusCode(r.getStatusCode()).customHeader(r.getCustomHeader())
-            .build();
+    @Override
+    public Boolean create(ResponseDto req) {
+        MockResponse response = MockResponse.builder()
+                .id(IdWorker.getId())
+                .customHeader(req.getCustomHeader())
+                .content(req.getName())
+                .description(req.getDescription())
+                .main(req.getStatus())
+                .statusCode(req.getHttpStatus())
+                .method(req.getHttpMethod())
+                .remark(req.getRemark())
+                .build();
+        return mockResponseService.save(response);
+    }
 
 }

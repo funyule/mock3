@@ -1,5 +1,6 @@
 package cn.zaink.mock3.conf;
 
+import cn.hutool.http.Header;
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +40,7 @@ public class SwaggerConfiguration {
     private List<RequestParameter> publicHeaders() {
         List<RequestParameter> parameters = new ArrayList<>(3);
         parameters.add(new RequestParameterBuilder()
-                .name("x-user-id").description("用户id")
+                .name(Header.AUTHORIZATION.getValue()).description("令牌")
                 .example(new ExampleBuilder().value("1").build())
                 .in(ParameterType.HEADER).build());
         return parameters;

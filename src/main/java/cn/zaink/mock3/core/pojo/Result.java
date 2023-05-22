@@ -60,7 +60,7 @@ public class Result<T> implements Serializable {
     }
 
     public static <R> Result<R> fail() {
-        return fail("{}", "fail");
+        return fail("fail");
     }
 
     public static <R> Result<R> fail(String msg, Object... args) {
@@ -69,10 +69,6 @@ public class Result<T> implements Serializable {
 
     public static <R> Result<R> fail(int code, String msg, Object... args) {
         return back(null, code, msg, args);
-    }
-
-    public static <R> Result<R> fail(R data) {
-        return back(data, 500, "fail");
     }
 
     private static <R> Result<R> back(R data, int status, String msg, Object... args) {

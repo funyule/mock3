@@ -26,13 +26,14 @@
         <spring.cloud.feign.version>1.4.7.RELEASE</spring.cloud.feign.version>
         <spring.cloud.swagger.version>3.0.0</spring.cloud.swagger.version>
 
-        <hutool.version>5.7.14</hutool.version>
+        <hutool.version>5.8.11</hutool.version>
         <nacos.version>2.1.4.RELEASE</nacos.version>
         <guava-version>20.0</guava-version>
         <poi.version>4.1.2</poi.version>
         <logback.version>1.2.11</logback.version>
         <mvel2.version>2.4.15.Final</mvel2.version>
         <caffeine.version>2.9.2</caffeine.version>
+        <version>8.0.28</version>
     </properties>
 
     <dependencies>
@@ -91,6 +92,12 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!-- nacos -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <version>${nacos.version}</version>
         </dependency>
         <!-- 单元测试 -->
         <dependency>

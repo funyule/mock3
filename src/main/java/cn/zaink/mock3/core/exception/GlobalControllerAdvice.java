@@ -57,7 +57,7 @@ public class GlobalControllerAdvice implements ResponseBodyAdvice<Object> {
      */
     @ExceptionHandler(Exception.class)
     public Result<String> handleException(Exception ex) {
-        log.error("System Exception ====> ", ex);
+        log.error("系统内部错误 ", ex);
         Throwable rootCause = ExceptionUtil.getRootCause(ex);
         if (rootCause instanceof BizException) {
             return bizExceptionHandler((BizException) rootCause);
