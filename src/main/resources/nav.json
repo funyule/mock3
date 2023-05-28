@@ -111,9 +111,9 @@
     "path": "/mock/url-response-list/:pageNo([1-9]\\d*)?",
     "meta": {
       "title": "MockApiResponse列表",
-      "show": true
+      "show": false
     },
-    "component": "UrlReponseList"
+    "component": "UrlResponseList"
   },
   {
     "name": "module-list",

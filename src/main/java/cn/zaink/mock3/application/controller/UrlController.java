@@ -1,7 +1,7 @@
 package cn.zaink.mock3.application.controller;
 
-import cn.zaink.mock3.application.pojo.MockUrlDto;
-import cn.zaink.mock3.application.pojo.UrlQry;
+import cn.zaink.mock3.application.dto.MockUrlDto;
+import cn.zaink.mock3.application.dto.UrlQry;
 import cn.zaink.mock3.application.service.UrlService;
 import cn.zaink.mock3.core.pojo.Result;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -48,13 +48,13 @@ public class UrlController {
 
     @ApiOperation("查看url详情")
     @GetMapping("/{id}")
-    public Result<MockUrlDto> detail(@ApiParam(value = "id", required = true) @RequestParam("id") Long id) {
+    public Result<MockUrlDto> detail(@ApiParam(value = "id", required = true) @PathVariable("id") Long id) {
         return Result.ok(urlService.detail(id));
     }
 
     @ApiOperation("删除url")
     @DeleteMapping("{id}")
-    public Result<Boolean> delete(@PathVariable Long id) {
+    public Result<Boolean> delete(@PathVariable("id") Long id) {
         return Result.ok(urlService.delete(id));
     }
 }

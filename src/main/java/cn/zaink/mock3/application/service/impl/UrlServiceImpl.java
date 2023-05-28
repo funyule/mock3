@@ -2,8 +2,8 @@ package cn.zaink.mock3.application.service.impl;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
-import cn.zaink.mock3.application.pojo.MockUrlDto;
-import cn.zaink.mock3.application.pojo.UrlQry;
+import cn.zaink.mock3.application.dto.MockUrlDto;
+import cn.zaink.mock3.application.dto.UrlQry;
 import cn.zaink.mock3.application.service.UrlService;
 import cn.zaink.mock3.core.exception.BizException;
 import cn.zaink.mock3.infrastructure.domain.MockUrl;

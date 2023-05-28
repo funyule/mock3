@@ -1,6 +1,6 @@
-package cn.zaink.mock3.application.pojo;
+package cn.zaink.mock3.application.dto;
 
-import cn.zaink.mock3.core.pojo.BasePojo;
+import cn.zaink.mock3.core.pojo.PageQry;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,13 +11,13 @@ import lombok.experimental.SuperBuilder;
 /**
  * @author zaink
  **/
-@EqualsAndHashCode(callSuper = true)
-@SuperBuilder
-@ApiModel("模块返回体对象")
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
+@ApiModel("url查询对象")
 @Data
-public class ModuleDto extends BasePojo {
+public class ModuleQry extends PageQry {
+
     private String name;
-    private String serviceName;
 }

@@ -1,4 +1,4 @@
-package cn.zaink.mock3.application.pojo;
+package cn.zaink.mock3.application.dto;
 
 import cn.hutool.core.date.DatePattern;
 import cn.zaink.mock3.core.pojo.BasePojo;
