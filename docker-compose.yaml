@@ -1,0 +1,6 @@
+version: "2.4"
+services:
+  mockServer:
+    image: mock3:latest
+    ports:
+      - 8080:8081
