@@ -8,6 +8,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
 /**
  * @author zaink
  **/
@@ -19,11 +23,19 @@ import lombok.NoArgsConstructor;
 public class UrlQry extends PageQry {
 
     @ApiModelProperty("所属模块")
-    private Integer module;
+    private String moduleId;
     @ApiModelProperty("名称")
     private String name;
     @ApiModelProperty("url")
     private String url;
+    /**
+     * @see cn.zaink.mock3.application.consts.ResponseType
+     */
+    @NotBlank
+    @Min(1)
+    @Max(2)
+    @ApiModelProperty(value = "响应类型", allowableValues = "1,2", required = true)
+    private Integer responseType;
     @ApiModelProperty("描述")
     private String description;
 }

@@ -3,11 +3,14 @@ package cn.zaink.mock3.application.service.impl;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import cn.zaink.mock3.application.dto.MockUrlDto;
+import cn.zaink.mock3.application.dto.ModuleDto;
 import cn.zaink.mock3.application.dto.UrlQry;
 import cn.zaink.mock3.application.service.UrlService;
 import cn.zaink.mock3.core.exception.BizException;
+import cn.zaink.mock3.infrastructure.domain.MockModule;
 import cn.zaink.mock3.infrastructure.domain.MockUrl;
 import cn.zaink.mock3.infrastructure.domain.MockUrlLogic;
+import cn.zaink.mock3.infrastructure.service.MockModuleService;
 import cn.zaink.mock3.infrastructure.service.MockUrlLogicService;
 import cn.zaink.mock3.infrastructure.service.MockUrlService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -20,8 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.function.Function;
 import java.util.regex.Pattern;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author zaink
@@ -33,30 +37,46 @@ public class UrlServiceImpl implements UrlService {
     private final MockUrlService mockUrlService;
     private final MockUrlLogicService mockUrlLogicService;
 
-    public UrlServiceImpl(MockUrlService mockUrlService, MockUrlLogicService mockUrlLogicService) {
+    private final MockModuleService mockModuleService;
+
+    public UrlServiceImpl(MockUrlService mockUrlService, MockUrlLogicService mockUrlLogicService, MockModuleService mockModuleService) {
         this.mockUrlService = mockUrlService;
         this.mockUrlLogicService = mockUrlLogicService;
+        this.mockModuleService = mockModuleService;
     }
 
     @Override
-    public IPage<MockUrlDto> find(UrlQry mockUrl) {
+    public IPage<MockUrlDto> find(UrlQry req) {
         LambdaQueryWrapper<MockUrl> queryWrapper = Wrappers.<MockUrl>lambdaQuery()
-                .like(StrUtil.isNotBlank(mockUrl.getName()), MockUrl::getName, mockUrl.getName())
-                .like(StrUtil.isNotBlank(mockUrl.getDescription()), MockUrl::getDescription, mockUrl.getDescription())
+                .like(StrUtil.isNotBlank(req.getName()), MockUrl::getName, req.getName())
+                .like(StrUtil.isNotBlank(req.getDescription()), MockUrl::getDescription, req.getDescription())
+                .eq(null != req.getResponseType(), MockUrl::getResponseType, req.getResponseType())
+                .eq(StrUtil.isNotBlank(req.getModuleId()), MockUrl::getModuleId, req.getModuleId())
                 .orderByDesc(MockUrl::getCreateTime);
-        Page<MockUrl> page = new Page<>(mockUrl.getCurrent(), mockUrl.getSize());
-        page.setSearchCount(true);
+        Page<MockUrl> page = new Page<>(req.getCurrent(), req.getSize());
         return mockUrlService.page(page, queryWrapper)
-                .convert(po2dto);
+                .convert(this::po2dto);
     }
 
-    private final Function<MockUrl, MockUrlDto> po2dto = r -> MockUrlDto.builder()
-            .id(r.getId()).name(r.getName())
-            .url(r.getUrl()).description(r.getDescription())
-            .responseType(r.getResponseType())
-            .createBy(r.getCreateBy()).createTime(r.getCreateTime())
-            .updateBy(r.getUpdateBy()).updateTime(r.getUpdateTime())
-            .build();
+    private MockUrlDto po2dto(MockUrl r) {
+        if (null == r) {
+            return null;
+        }
+        Long moduleId = r.getModuleId();
+        MockModule mockModule = mockModuleService.getById(moduleId);
+        return MockUrlDto.builder()
+                .id(r.getId()).name(r.getName()).moduleId(moduleId)
+                .url(r.getUrl()).description(r.getDescription())
+                .responseType(r.getResponseType())
+                .createBy(r.getCreateBy()).createTime(r.getCreateTime())
+                .updateBy(r.getUpdateBy()).updateTime(r.getUpdateTime())
+                .module(ModuleDto.builder()
+                        .id(moduleId).name(mockModule.getName())
+                        .serviceName(mockModule.getServiceName())
+                        .publishService(mockModule.getPublishService())
+                        .build())
+                .build();
+    }
 
     @Transactional(rollbackFor = Throwable.class)
     @Override
@@ -65,7 +85,7 @@ public class UrlServiceImpl implements UrlService {
         String formatUrlStr = formatUrlStr(reqUrl);
         MockUrlLogic logUrl = createLogUrl(formatUrlStr);
         MockUrl mockUrl = MockUrl.builder()
-                .id(IdWorker.getId())
+                .id(IdWorker.getId()).moduleId(req.getModuleId())
                 .name(req.getName()).url(formatUrlStr)
                 .responseType(req.getResponseType())
                 .logic(null != logUrl ? logUrl.getLogicId() : null)
@@ -111,7 +131,7 @@ public class UrlServiceImpl implements UrlService {
     @Override
     public MockUrlDto detail(Long id) {
         MockUrl mockUrl = mockUrlService.getById(id);
-        return null == mockUrl ? null : po2dto.apply(mockUrl);
+        return po2dto(mockUrl);
     }
 
     @Transactional(rollbackFor = Throwable.class)
@@ -127,7 +147,13 @@ public class UrlServiceImpl implements UrlService {
     }
 
     @Override
-    public Boolean update(MockUrlDto mockUrl) {
-        return false;
+    public Boolean update(MockUrlDto req) {
+        return mockUrlService.update(Wrappers.<MockUrl>lambdaUpdate()
+                .set(isNotBlank(req.getName()), MockUrl::getName, req.getName())
+                .set(isNotBlank(req.getUrl()), MockUrl::getUrl, req.getUrl())
+                .set(isNotBlank(req.getDescription()), MockUrl::getDescription, req.getDescription())
+                .set(null != req.getModuleId(), MockUrl::getModuleId, req.getModuleId())
+                .set(null != req.getResponseType(), MockUrl::getResponseType, req.getResponseType())
+                .eq(MockUrl::getId, req.getId()));
     }
 }

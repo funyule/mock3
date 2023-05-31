@@ -38,7 +38,7 @@ public class ModuleController {
     }
 
     @ApiOperation("修改")
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public Result<Boolean> update(@PathVariable Long id, @RequestBody ModuleDto module) {
         return Result.ok(moduleService.update(id, module));
     }

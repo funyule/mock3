@@ -23,6 +23,8 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class MockUrl extends BasePojo {
 
+    @TableField(value = "module_id")
+    private Long moduleId;
     /**
      *
      */

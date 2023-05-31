@@ -1,8 +1,8 @@
 package cn.zaink.mock3.application.dto;
 
-import cn.hutool.core.date.DatePattern;
 import cn.zaink.mock3.core.pojo.BasePojo;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotNull;
 
 /**
  * mock_url
@@ -29,12 +29,13 @@ import java.time.LocalDateTime;
 @Data
 public class MockUrlDto extends BasePojo {
 
-    /**
-     *
-     */
-    @JsonFormat(pattern = DatePattern.NORM_DATETIME_PATTERN)
-    private LocalDateTime updateTime;
+    @NotNull
+    @ApiModelProperty("所属模块")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long moduleId;
 
+    @ApiModelProperty("所属模块信息")
+    private ModuleDto module;
     /**
      *
      */

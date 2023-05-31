@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * url路径Controller
  *
@@ -36,11 +38,11 @@ public class UrlController {
 
     @ApiOperation("新增路径")
     @PostMapping
-    public Result<Long> create(@RequestBody MockUrlDto mockUrl) {
+    public Result<Long> create(@Valid @RequestBody MockUrlDto mockUrl) {
         return Result.ok(urlService.create(mockUrl));
     }
 
-    @ApiOperation("更新路径")
+    @ApiOperation("更新")
     @PutMapping("/{id}")
     public Result<Boolean> update(@PathVariable Long id, @RequestBody MockUrlDto mockUrl) {
         return Result.ok(urlService.update(mockUrl));

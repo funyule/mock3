@@ -42,6 +42,6 @@ public class MockModule implements Serializable {
     /**
      * 是否注册服务
      */
-    @TableField("regist_enable")
-    private Boolean registEnable;
+    @TableField("publish_service")
+    private Integer publishService;
 }
