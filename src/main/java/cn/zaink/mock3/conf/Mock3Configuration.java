@@ -5,7 +5,6 @@ import cn.zaink.mock3.core.handler.MockResponseStrategy;
 import cn.zaink.mock3.core.handler.MockResponseStrategyFactory;
 import cn.zaink.mock3.core.handler.UrlHandlerChain;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -39,4 +38,5 @@ public class Mock3Configuration implements InitializingBean {
                 .collect(Collectors.toList());
         UrlHandlerChain.init(urlHandlers);
     }
+
 }

@@ -1,10 +1,7 @@
 package cn.zaink.mock3.core.handler;
 
 import cn.hutool.core.lang.Assert;
-import cn.hutool.extra.servlet.ServletUtil;
-import cn.hutool.http.ContentType;
 import cn.zaink.mock3.application.consts.ResponseType;
-import cn.zaink.mock3.application.dto.HttpHeadersDto;
 import cn.zaink.mock3.application.dto.ResponseDto;
 import cn.zaink.mock3.application.dto.ResponseQry;
 import cn.zaink.mock3.application.service.ResponseService;
@@ -12,15 +9,11 @@ import cn.zaink.mock3.core.exception.BizException;
 import cn.zaink.mock3.infrastructure.domain.MockUrl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * @author zaink
@@ -35,7 +28,7 @@ public class ManualMockResponseStrategy implements MockResponseStrategy {
     }
 
     @Override
-    public void doMockResponse(MockUrl url, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseDto doMockResponse(MockUrl url, HttpServletRequest request) {
         Long id = url.getId();
         IPage<ResponseDto> page = responseService.find(ResponseQry.builder()
                 .urlId(id).enable(true)
@@ -50,19 +43,7 @@ public class ManualMockResponseStrategy implements MockResponseStrategy {
                 .findAny()
                 .orElse(null);
         Assert.notNull(mockResponse, () -> new BizException(HttpStatus.METHOD_NOT_ALLOWED));
-        assert mockResponse != null;
-
-        String contentType = response.getContentType();
-        if (isBlank(contentType)) {
-            contentType = ContentType.JSON.getValue();
-        }
-        if (CollectionUtils.isNotEmpty(mockResponse.getCustomHeader())) {
-
-            for (HttpHeadersDto customHeader : mockResponse.getCustomHeader()) {
-                response.addHeader(customHeader.getName(), customHeader.getValue());
-            }
-        }
-        ServletUtil.write(response, mockResponse.getContent(), contentType);
+        return mockResponse;
     }
 
     @Override

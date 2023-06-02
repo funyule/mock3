@@ -7,6 +7,7 @@
     <groupId>cn.zaink</groupId>
     <artifactId>mock3</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -33,6 +34,7 @@
         <logback.version>1.2.11</logback.version>
         <mvel2.version>2.4.15.Final</mvel2.version>
         <caffeine.version>2.9.2</caffeine.version>
+        <netty.version>4.1.93.Final</netty.version>
         <version>8.0.28</version>
     </properties>
 
@@ -98,6 +100,16 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
+
+        <!-- socket -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
         <!-- nacos -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -129,6 +141,20 @@
                 <version>${spring.cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- yml -->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.29</version>
+            </dependency>
+
+            <!-- netty-->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <type>pom</type>
+                <version>${netty.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

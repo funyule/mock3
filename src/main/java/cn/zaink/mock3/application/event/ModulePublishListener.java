@@ -9,6 +9,7 @@ import com.alibaba.nacos.api.naming.PreservedMetadataKeys;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.util.Yaml;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.cloud.commons.util.InetUtils;
@@ -42,14 +43,13 @@ public class ModulePublishListener implements ApplicationListener<WebServerIniti
     }
 
     @EventListener(ModulePublishEvent.class)
-    public void publish(ModulePublishEvent event) throws NacosException, JsonProcessingException {
+    public void publish2nacos(ModulePublishEvent event) throws NacosException, JsonProcessingException {
         MockModule mockModule = event.getSource();
         String serviceName = mockModule.getServiceName();
         String group = "DEFAULT";
-        Map<String, String> metadata = MapBuilder.<String, String>create()
+        Map<String, String> serviceMetaData = MapBuilder.<String, String>create()
                 .put(PreservedMetadataKeys.REGISTER_SOURCE, "SPRING_CLOUD")
                 .put(PreservedMetadataKeys.HEART_BEAT_INTERVAL, "5s")
-                .put("url.suffix", serviceName.concat("/fake"))
                 .build();
 
         Instance instance = new Instance();
@@ -58,9 +58,18 @@ public class ModulePublishListener implements ApplicationListener<WebServerIniti
         instance.setWeight(1.0);
         instance.setClusterName(group);
         instance.setEnabled(mockModule.getPublishService() == 1);
-        instance.setMetadata(metadata);
+        instance.setMetadata(serviceMetaData);
         nacosUtil.getNamingService().registerInstance(serviceName, instance);
-        nacosUtil.getConfigService().publishConfig(serviceName, group, objectMapper.writeValueAsString(metadata), ConfigType.JSON.getType());
+
+        // 生成对应的yml配置
+        Map<String, Object> configMetaData = MapBuilder.<String, Object>create()
+                .put("server", MapBuilder.<String, Object>create()
+                        .put("servlet", MapBuilder.<String, Object>create()
+                                .put("context-path", "/fake")
+                                .build())
+                        .build())
+                .build();
+        nacosUtil.getConfigService().publishConfig(serviceName, group, Yaml.pretty().writeValueAsString(configMetaData), ConfigType.YAML.getType());
     }
 
     @Override
