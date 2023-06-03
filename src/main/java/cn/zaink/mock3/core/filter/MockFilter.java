@@ -88,6 +88,7 @@ public class MockFilter implements Filter {
                     response.addHeader(customHeader.getName(), customHeader.getValue());
                 }
             }
+            response.setStatus(mockResponse.getHttpStatus().value());
             ServletUtil.write(response, mockResponse.getContent(), contentType);
 
             eventPublisher.publishEvent(new MockUseEvent(MockLog.builder()

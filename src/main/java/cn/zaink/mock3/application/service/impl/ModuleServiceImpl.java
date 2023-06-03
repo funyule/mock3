@@ -6,8 +6,6 @@ import cn.zaink.mock3.application.dto.ModuleQry;
 import cn.zaink.mock3.application.event.ModuleEvent;
 import cn.zaink.mock3.application.service.ModuleService;
 import cn.zaink.mock3.infrastructure.domain.MockModule;
-import cn.zaink.mock3.infrastructure.domain.MockResponse;
-import cn.zaink.mock3.infrastructure.domain.MockUrl;
 import cn.zaink.mock3.infrastructure.service.MockModuleService;
 import cn.zaink.mock3.infrastructure.service.MockResponseService;
 import cn.zaink.mock3.infrastructure.service.MockUrlService;
@@ -17,15 +15,10 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hankcs.hanlp.HanLP;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.text.WordUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -54,16 +47,11 @@ public class ModuleServiceImpl implements ModuleService {
     @Override
     public Boolean delete(Long id) {
         MockModule mockModule = mockModuleService.getById(id);
-        List<MockUrl> mockUrls = mockUrlService.list(Wrappers.<MockUrl>lambdaQuery()
-                .eq(MockUrl::getModuleId, mockModule.getId()));
-        if (CollectionUtils.isNotEmpty(mockUrls)) {
-            Set<Long> urlIds = mockUrls.stream().map(MockUrl::getId).collect(Collectors.toSet());
-            mockResponseService.remove(Wrappers.<MockResponse>lambdaQuery()
-                    .in(MockResponse::getUrlId, urlIds));
-            mockUrlService.removeByIds(urlIds);
+        boolean removeById = mockModuleService.removeById(id);
+        if (removeById) {
+            eventPublisher.publishEvent(new ModuleEvent.Delete(mockModule));
         }
-        eventPublisher.publishEvent(new ModuleEvent.Delete(mockModule));
-        return mockModuleService.removeById(id);
+        return removeById;
     }
 
     @Transactional(rollbackFor = Throwable.class)

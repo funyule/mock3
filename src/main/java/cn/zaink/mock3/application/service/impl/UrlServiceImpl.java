@@ -1,13 +1,11 @@
 package cn.zaink.mock3.application.service.impl;
 
-import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import cn.zaink.mock3.application.dto.MockUrlDto;
 import cn.zaink.mock3.application.dto.ModuleDto;
 import cn.zaink.mock3.application.dto.UrlQry;
 import cn.zaink.mock3.application.event.UrlEvent;
 import cn.zaink.mock3.application.service.UrlService;
-import cn.zaink.mock3.core.exception.BizException;
 import cn.zaink.mock3.infrastructure.domain.MockModule;
 import cn.zaink.mock3.infrastructure.domain.MockUrl;
 import cn.zaink.mock3.infrastructure.domain.MockUrlLogic;
@@ -56,7 +54,7 @@ public class UrlServiceImpl implements UrlService {
                 .like(StrUtil.isNotBlank(req.getName()), MockUrl::getName, req.getName())
                 .like(StrUtil.isNotBlank(req.getDescription()), MockUrl::getDescription, req.getDescription())
                 .eq(null != req.getResponseType(), MockUrl::getResponseType, req.getResponseType())
-                .eq(StrUtil.isNotBlank(req.getModuleId()), MockUrl::getModuleId, req.getModuleId())
+                .eq(null != req.getModuleId(), MockUrl::getModuleId, req.getModuleId())
                 .like(isNotBlank(req.getUrl()), MockUrl::getUrl, req.getUrl())
                 .orderByDesc(MockUrl::getCreateTime);
         Page<MockUrl> page = new Page<>(req.getCurrent(), req.getSize());
@@ -145,13 +143,10 @@ public class UrlServiceImpl implements UrlService {
     @Override
     public Boolean delete(Long id) {
         MockUrl mockUrl = mockUrlService.getById(id);
-        Assert.notNull(mockUrl, () -> new BizException("Url不存在"));
-        if (null != mockUrl.getLogic()) {
-            mockUrlLogicService.remove(Wrappers.<MockUrlLogic>lambdaQuery()
-                    .eq(MockUrlLogic::getLogicId, mockUrl.getLogic()));
-        }
         boolean removeById = mockUrlService.removeById(id);
-        eventPublisher.publishEvent(new UrlEvent.Delete(mockUrl));
+        if (removeById) {
+            eventPublisher.publishEvent(new UrlEvent.Delete(mockUrl));
+        }
         return removeById;
     }
 

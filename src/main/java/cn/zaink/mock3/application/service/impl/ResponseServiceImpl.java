@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Assert;
 import cn.zaink.mock3.application.dto.HttpHeadersDto;
 import cn.zaink.mock3.application.dto.ResponseDto;
 import cn.zaink.mock3.application.dto.ResponseQry;
+import cn.zaink.mock3.application.event.UrlResponseEvent;
 import cn.zaink.mock3.application.service.ResponseService;
 import cn.zaink.mock3.core.exception.BizException;
 import cn.zaink.mock3.infrastructure.domain.MockResponse;
@@ -16,7 +17,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -37,10 +38,12 @@ public class ResponseServiceImpl implements ResponseService {
 
     private final MockResponseService mockResponseService;
     private final MockResponseHeaderService mockResponseHeaderService;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public ResponseServiceImpl(MockResponseService mockResponseService, MockResponseHeaderService mockResponseHeaderService) {
+    public ResponseServiceImpl(MockResponseService mockResponseService, MockResponseHeaderService mockResponseHeaderService, ApplicationEventPublisher eventPublisher) {
         this.mockResponseService = mockResponseService;
         this.mockResponseHeaderService = mockResponseHeaderService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -88,15 +91,7 @@ public class ResponseServiceImpl implements ResponseService {
     @Override
     public Boolean update(ResponseDto req) {
         Assert.notNull(req.getId(), () -> new BizException("Id不能为空"));
-        if (1 == req.getEnable()) {
-            // 同一中HttpMethod类型的response只允许有一个enable存在
-            MockResponse currentResponse = mockResponseService.getById(req.getId());
-            mockResponseService.update(Wrappers.<MockResponse>lambdaUpdate()
-                    .eq(MockResponse::getUrlId, req.getUrlId())
-                    .eq(MockResponse::getHttpMethod, currentResponse.getHttpMethod())
-                    .set(MockResponse::getEnable, false));
-        }
-        return mockResponseService.update(Wrappers.<MockResponse>lambdaUpdate()
+        boolean updated = mockResponseService.update(Wrappers.<MockResponse>lambdaUpdate()
                 .set(null != req.getEnable(), MockResponse::getEnable, req.getEnable())
                 .set(isNotBlank(req.getDescription()), MockResponse::getDescription, req.getDescription())
                 .set(isNotBlank(req.getName()), MockResponse::getName, req.getName())
@@ -104,18 +99,28 @@ public class ResponseServiceImpl implements ResponseService {
                 .set(null != req.getHttpMethod(), MockResponse::getHttpMethod, null != req.getHttpMethod() ? req.getHttpMethod().name() : null)
                 .set(null != req.getHttpStatus(), MockResponse::getHttpStatus, null != req.getHttpStatus() ? req.getHttpStatus().value() : null)
                 .eq(MockResponse::getId, req.getId()));
+        if (updated) {
+            MockResponse mockResponse = mockResponseService.getById(req.getId());
+            eventPublisher.publishEvent(new UrlResponseEvent.Update(mockResponse, req));
+        }
+        return updated;
     }
 
     @Transactional(rollbackFor = Throwable.class)
     @Override
     public Boolean delete(Long id) {
-        return mockResponseService.removeById(id);
+        MockResponse mockResponse = mockResponseService.getById(id);
+        boolean b = mockResponseService.removeById(id);
+        if (b) {
+            eventPublisher.publishEvent(new UrlResponseEvent.Delete(mockResponse));
+        }
+        return b;
     }
 
     @Transactional(rollbackFor = Throwable.class)
     @Override
     public Long create(ResponseDto req) {
-        MockResponse response = MockResponse.builder()
+        MockResponse mockResponse = MockResponse.builder()
                 .id(IdWorker.getId()).name(req.getName())
                 .content(req.getContent())
                 .description(req.getDescription())
@@ -126,20 +131,9 @@ public class ResponseServiceImpl implements ResponseService {
                 .urlId(req.getUrlId())
                 .createTime(LocalDateTime.now())
                 .build();
-        mockResponseService.save(response);
-        List<HttpHeadersDto> customHeaders = req.getCustomHeader();
-        Long responseId = response.getId();
-        if (CollectionUtils.isNotEmpty(customHeaders)) {
-            List<MockResponseHeader> collect = customHeaders.stream()
-                    .map(h -> MockResponseHeader.builder()
-                            .id(IdWorker.getId())
-                            .mockResponseId(responseId)
-                            .name(h.getName()).value(h.getValue())
-                            .createTime(LocalDateTime.now())
-                            .build())
-                    .collect(Collectors.toList());
-            mockResponseHeaderService.saveBatch(collect);
-        }
+        mockResponseService.save(mockResponse);
+        Long responseId = mockResponse.getId();
+        eventPublisher.publishEvent(new UrlResponseEvent.Create(mockResponse, req));
         return responseId;
     }
 
