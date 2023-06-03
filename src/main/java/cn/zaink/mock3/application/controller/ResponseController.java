@@ -54,8 +54,8 @@ public class ResponseController {
 
     @ApiOperation("新增")
     @PostMapping
-    public Result<Long> create(@Valid @RequestBody ResponseDto req) {
-        return Result.ok(responseService.create(req));
+    public Result<String> create(@Valid @RequestBody ResponseDto req) {
+        return Result.ok(String.valueOf(responseService.create(req)));
     }
 
     @ApiOperation("修改")

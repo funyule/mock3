@@ -88,7 +88,7 @@ public class ResponseServiceImpl implements ResponseService {
     @Override
     public Boolean update(ResponseDto req) {
         Assert.notNull(req.getId(), () -> new BizException("Id不能为空"));
-        if (Boolean.TRUE.equals(req.getEnable())) {
+        if (1 == req.getEnable()) {
             // 同一中HttpMethod类型的response只允许有一个enable存在
             MockResponse currentResponse = mockResponseService.getById(req.getId());
             mockResponseService.update(Wrappers.<MockResponse>lambdaUpdate()
@@ -101,6 +101,8 @@ public class ResponseServiceImpl implements ResponseService {
                 .set(isNotBlank(req.getDescription()), MockResponse::getDescription, req.getDescription())
                 .set(isNotBlank(req.getName()), MockResponse::getName, req.getName())
                 .set(isNotBlank(req.getContent()), MockResponse::getContent, req.getContent())
+                .set(null != req.getHttpMethod(), MockResponse::getHttpMethod, null != req.getHttpMethod() ? req.getHttpMethod().name() : null)
+                .set(null != req.getHttpStatus(), MockResponse::getHttpStatus, null != req.getHttpStatus() ? req.getHttpStatus().value() : null)
                 .eq(MockResponse::getId, req.getId()));
     }
 

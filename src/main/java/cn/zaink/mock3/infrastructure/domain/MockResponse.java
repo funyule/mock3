@@ -47,7 +47,7 @@ public class MockResponse extends BasePojo {
      *
      */
     @TableField(value = "enable")
-    private Boolean enable;
+    private Integer enable;
 
     /**
      *

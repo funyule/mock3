@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.zaink.mock3.application.dto.MockUrlDto;
 import cn.zaink.mock3.application.dto.ModuleDto;
 import cn.zaink.mock3.application.dto.UrlQry;
+import cn.zaink.mock3.application.event.UrlEvent;
 import cn.zaink.mock3.application.service.UrlService;
 import cn.zaink.mock3.core.exception.BizException;
 import cn.zaink.mock3.infrastructure.domain.MockModule;
@@ -19,6 +20,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,10 +41,13 @@ public class UrlServiceImpl implements UrlService {
 
     private final MockModuleService mockModuleService;
 
-    public UrlServiceImpl(MockUrlService mockUrlService, MockUrlLogicService mockUrlLogicService, MockModuleService mockModuleService) {
+    private final ApplicationEventPublisher eventPublisher;
+
+    public UrlServiceImpl(MockUrlService mockUrlService, MockUrlLogicService mockUrlLogicService, MockModuleService mockModuleService, ApplicationEventPublisher eventPublisher) {
         this.mockUrlService = mockUrlService;
         this.mockUrlLogicService = mockUrlLogicService;
         this.mockModuleService = mockModuleService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -52,6 +57,7 @@ public class UrlServiceImpl implements UrlService {
                 .like(StrUtil.isNotBlank(req.getDescription()), MockUrl::getDescription, req.getDescription())
                 .eq(null != req.getResponseType(), MockUrl::getResponseType, req.getResponseType())
                 .eq(StrUtil.isNotBlank(req.getModuleId()), MockUrl::getModuleId, req.getModuleId())
+                .like(isNotBlank(req.getUrl()), MockUrl::getUrl, req.getUrl())
                 .orderByDesc(MockUrl::getCreateTime);
         Page<MockUrl> page = new Page<>(req.getCurrent(), req.getSize());
         return mockUrlService.page(page, queryWrapper)
@@ -93,6 +99,7 @@ public class UrlServiceImpl implements UrlService {
                 .createTime(LocalDateTime.now())
                 .build();
         mockUrlService.save(mockUrl);
+        eventPublisher.publishEvent(new UrlEvent.Create(mockUrl));
         return mockUrl.getId();
     }
 
@@ -143,17 +150,24 @@ public class UrlServiceImpl implements UrlService {
             mockUrlLogicService.remove(Wrappers.<MockUrlLogic>lambdaQuery()
                     .eq(MockUrlLogic::getLogicId, mockUrl.getLogic()));
         }
-        return mockUrlService.removeById(id);
+        boolean removeById = mockUrlService.removeById(id);
+        eventPublisher.publishEvent(new UrlEvent.Delete(mockUrl));
+        return removeById;
     }
 
     @Override
     public Boolean update(MockUrlDto req) {
-        return mockUrlService.update(Wrappers.<MockUrl>lambdaUpdate()
+        boolean updated = mockUrlService.update(Wrappers.<MockUrl>lambdaUpdate()
                 .set(isNotBlank(req.getName()), MockUrl::getName, req.getName())
                 .set(isNotBlank(req.getUrl()), MockUrl::getUrl, req.getUrl())
                 .set(isNotBlank(req.getDescription()), MockUrl::getDescription, req.getDescription())
                 .set(null != req.getModuleId(), MockUrl::getModuleId, req.getModuleId())
                 .set(null != req.getResponseType(), MockUrl::getResponseType, req.getResponseType())
                 .eq(MockUrl::getId, req.getId()));
+        if (updated) {
+            MockUrl mockUrl = mockUrlService.getById(req.getId());
+            eventPublisher.publishEvent(new UrlEvent.Update(mockUrl));
+        }
+        return updated;
     }
 }

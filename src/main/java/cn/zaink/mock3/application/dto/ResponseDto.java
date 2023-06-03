@@ -48,7 +48,7 @@ public class ResponseDto extends BasePojo {
 
     @ApiModelProperty(value = "状态", notes = "1-当前生效")
     @NotBlank
-    private Boolean enable;
+    private Integer enable;
 
     private String description;
 

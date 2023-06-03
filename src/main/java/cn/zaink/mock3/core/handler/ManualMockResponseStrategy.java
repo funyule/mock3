@@ -32,7 +32,7 @@ public class ManualMockResponseStrategy implements MockResponseStrategy {
         Long id = url.getId();
         IPage<ResponseDto> page = responseService.find(ResponseQry.builder()
                 .urlId(id).enable(true)
-                .current(1).size(Integer.MAX_VALUE)
+                .current(1L).size(Long.MAX_VALUE)
                 .build());
         Assert.notEmpty(page.getRecords(), () -> new BizException(404, "系统存在该路径，但是还没有启用一个返回体"));
         String requestMethodStr = request.getMethod();

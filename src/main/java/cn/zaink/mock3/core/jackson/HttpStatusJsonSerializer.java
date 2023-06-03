@@ -15,8 +15,8 @@ public class HttpStatusJsonSerializer extends JsonSerializer<HttpStatus> {
     @Override
     public void serialize(HttpStatus value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         if (null != value) {
-            gen.writeString(value.getReasonPhrase());
-            gen.writeNumberField("httpStatusValue", value.value());
+            gen.writeNumber(value.value());
+            gen.writeStringField("httpStatusReasonPhrase", value.getReasonPhrase());
         }
     }
 }

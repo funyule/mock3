@@ -18,10 +18,10 @@ import lombok.experimental.SuperBuilder;
 public class PageQry {
 
     @ApiModelProperty(value = "每页大小，默认值10", example = "10")
-    private Integer size = 10;
+    private Long size = 10L;
 
     @ApiModelProperty(value = "当前页码，默认1", example = "1")
-    private Integer current = 1;
+    private Long current = 1L;
 
     @ApiModelProperty(value = "搜索关键字")
     private String keyWords;

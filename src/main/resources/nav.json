@@ -21,66 +21,7 @@
     },
     "component": "Workplace"
   },
-  {
-    "name": "monitor",
-    "path": "https://www.baidu.com/",
-    "parentId": 1,
-    "id": 3,
-    "meta": {
-      "title": "监控页（外部）",
-      "target": "_blank",
-      "show": true
-    }
-  },
-  {
-    "name": "Analysis",
-    "parentId": 1,
-    "id": 2,
-    "meta": {
-      "title": "分析页",
-      "show": true
-    },
-    "component": "Analysis",
-    "path": "/dashboard/analysis"
-  },
-  {
-    "name": "form",
-    "parentId": 0,
-    "id": 10,
-    "meta": {
-      "icon": "form",
-      "title": "表单页"
-    },
-    "redirect": "/form/base-form",
-    "component": "RouteView"
-  },
-  {
-    "name": "basic-form",
-    "parentId": 10,
-    "id": 6,
-    "meta": {
-      "title": "基础表单"
-    },
-    "component": "BasicForm"
-  },
-  {
-    "name": "step-form",
-    "parentId": 10,
-    "id": 5,
-    "meta": {
-      "title": "分步表单"
-    },
-    "component": "StepForm"
-  },
-  {
-    "name": "advanced-form",
-    "parentId": 10,
-    "id": 4,
-    "meta": {
-      "title": "高级表单"
-    },
-    "component": "AdvanceForm"
-  },
+
   {
     "name": "mock",
     "parentId": 0,
@@ -130,11 +71,12 @@
     "name": "url-log-list",
     "parentId": 90010,
     "id": 90012,
+    "path": "/mock/url-log/:pageNo([1-9]\\d*)?",
     "meta": {
       "title": "MockApi日志列表",
       "show": true
     },
-    "component": "StandardList"
+    "component": "UrlLogList"
   },
   {
     "name": "list",
