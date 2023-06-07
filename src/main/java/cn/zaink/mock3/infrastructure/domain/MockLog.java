@@ -2,7 +2,6 @@ package cn.zaink.mock3.infrastructure.domain;
 
 import cn.zaink.mock3.core.pojo.BasePojo;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -58,12 +57,6 @@ public class MockLog extends BasePojo {
      */
     @TableField(value = "response_body")
     private String responseBody;
-
-    /**
-     *
-     */
-    @TableLogic
-    private Integer delFlag;
 
     /**
      *

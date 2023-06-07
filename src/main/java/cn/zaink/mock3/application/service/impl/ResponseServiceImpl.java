@@ -70,7 +70,6 @@ public class ResponseServiceImpl implements ResponseService {
         return ResponseDto.builder()
                 .id(r.getId()).description(r.getDescription())
                 .createBy(r.getCreateBy()).createTime(r.getCreateTime())
-                .updateBy(r.getUpdateBy()).updateTime(r.getUpdateTime())
                 .name(r.getName()).enable(r.getEnable())
                 .httpMethod(HttpMethod.valueOf(r.getHttpMethod())).remark(r.getRemark())
                 .httpStatus(HttpStatus.valueOf(r.getHttpStatus()))

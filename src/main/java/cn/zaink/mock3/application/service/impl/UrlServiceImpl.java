@@ -73,7 +73,6 @@ public class UrlServiceImpl implements UrlService {
                 .url(r.getUrl()).description(r.getDescription())
                 .responseType(r.getResponseType())
                 .createBy(r.getCreateBy()).createTime(r.getCreateTime())
-                .updateBy(r.getUpdateBy()).updateTime(r.getUpdateTime())
                 .module(ModuleDto.builder()
                         .id(moduleId).name(mockModule.getName())
                         .serviceName(mockModule.getServiceName())
@@ -92,7 +91,7 @@ public class UrlServiceImpl implements UrlService {
                 .id(IdWorker.getId()).moduleId(req.getModuleId())
                 .name(req.getName()).url(formatUrlStr)
                 .responseType(req.getResponseType())
-                .logic(null != logUrl ? logUrl.getLogicId() : null)
+                .logic(null != logUrl ? logUrl.getId() : null)
                 .description(req.getDescription())
                 .createTime(LocalDateTime.now())
                 .build();
@@ -124,7 +123,7 @@ public class UrlServiceImpl implements UrlService {
                     .replaceAll("\\.", "\\\\.")
                     .replaceAll("\\/\\{([^{}]+)\\}", "\\\\\\/(\\\\w+)");
             MockUrlLogic urlLogic = MockUrlLogic.builder()
-                    .logicId(IdWorker.getId())
+                    .id(IdWorker.getId())
                     .subUrl(regexStr)
                     .build();
             mockUrlLogicService.save(urlLogic);

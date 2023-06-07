@@ -30,9 +30,6 @@ import java.util.List;
 @Data
 public class ResponseDto extends BasePojo {
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long id;
-
     @NotBlank
     @JsonSerialize(using = ToStringSerializer.class)
     private Long urlId;

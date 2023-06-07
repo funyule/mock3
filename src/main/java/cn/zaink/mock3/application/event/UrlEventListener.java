@@ -50,7 +50,7 @@ public class UrlEventListener {
         MockUrl mockUrl = event.getSource();
         if (null != mockUrl.getLogic()) {
             mockUrlLogicService.remove(Wrappers.<MockUrlLogic>lambdaQuery()
-                    .eq(MockUrlLogic::getLogicId, mockUrl.getLogic()));
+                    .eq(MockUrlLogic::getId, mockUrl.getLogic()));
         }
 
         List<MockResponse> responseList = mockResponseService.list(Wrappers.<MockResponse>lambdaQuery()

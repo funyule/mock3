@@ -30,10 +30,6 @@ public abstract class BasePojo {
     @ApiModelProperty("创建时间")
     @JsonFormat(pattern = DatePattern.NORM_DATETIME_PATTERN)
     private LocalDateTime createTime;
-    @ApiModelProperty("修改人")
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long updateBy;
-    @ApiModelProperty("修改时间")
-    @JsonFormat(pattern = DatePattern.NORM_DATETIME_PATTERN)
-    private LocalDateTime updateTime;
+    @ApiModelProperty("备注")
+    private String remark;
 }

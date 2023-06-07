@@ -29,7 +29,7 @@ public class PathUrlHandler extends AbstractUrlHandler {
         MockUrlLogic mockUrlLogic = mockUrlLogicService.matchUrl(uri);
         if (null != mockUrlLogic) {
             return mockUrlService.getOne(Wrappers.<MockUrl>lambdaQuery()
-                    .eq(MockUrl::getLogic, mockUrlLogic.getLogicId()));
+                    .eq(MockUrl::getLogic, mockUrlLogic.getId()));
         }
         return null;
     }

@@ -35,7 +35,7 @@
         <mvel2.version>2.4.15.Final</mvel2.version>
         <caffeine.version>2.9.2</caffeine.version>
         <netty.version>4.1.93.Final</netty.version>
-        <version>8.0.28</version>
+        <mysql.version>8.0.28</mysql.version>
     </properties>
 
     <dependencies>
@@ -95,17 +95,21 @@
             <artifactId>knife4j-spring-boot-starter</artifactId>
             <version>3.0.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
         <!-- orm -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.4.2</version>
+            <version>3.5.3.1</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
         </dependency>
-
         <!-- socket -->
         <dependency>
             <groupId>io.netty</groupId>
