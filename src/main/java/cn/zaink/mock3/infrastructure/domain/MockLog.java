@@ -46,6 +46,8 @@ public class MockLog extends BasePojo {
     @TableField(value = "hit_url")
     private String hitUrl;
 
+    @TableField(value = "response_status")
+    private Integer responseStatus;
     /**
      *
      */

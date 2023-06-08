@@ -96,6 +96,7 @@ public class MockFilter implements Filter {
                     .requestUrl(request.getRequestURI())
                     .requestMethod(request.getMethod())
                     .requestIp(ServletUtil.getClientIP(request))
+                    .responseStatus(response.getStatus())
                     .responseHeader(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mockResponse.getCustomHeader()))
                     .responseBody(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mockResponse.getContent()))
                     .build()));
