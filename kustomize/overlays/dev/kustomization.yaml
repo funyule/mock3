@@ -1,0 +1,11 @@
+# 个性化区分不同环境部署的命名空间
+namespace: mid
+commonLabels:
+  environment: dev
+resources:
+  - ../../base
+patchesStrategicMerge:
+  - healthcheck_patch.yaml
+  - memorylimit_patch.yaml
+  - service.yaml
+  - replicas.yaml

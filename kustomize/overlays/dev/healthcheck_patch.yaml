@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mock3
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: mock3
+          livenessProbe:
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 5
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+          readinessProbe:
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 10
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080

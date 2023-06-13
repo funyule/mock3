@@ -1,0 +1,23 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mock3
+spec:
+  selector:
+    matchLabels:
+      app: mock3
+  template:
+    metadata:
+      labels:
+        app: mock3
+    spec:
+      containers:
+        - name: mock3
+          volumeMounts:
+            - mountPath: /app/data
+              name: data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: pvc-mcd7-dev-zy

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mock3
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: mock3
+          resources:
+            limits:
+              cpu: '4'
+              memory: 2048Mi
+            requests:
+              cpu: '1'
+              memory: 512Mi
+          env:
+            - name: MEM_TOTAL_MB
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.memory

@@ -21,6 +21,17 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <!-- 私有镜像库地址 -->
+        <docker.registry.address>registry.asiainfo.com:5000</docker.registry.address>
+        <!-- 镜像名  镜像库:端口/命名空间/服务名-->
+        <docker.image.name>${docker.registry.address}/${project.artifactId}</docker.image.name>
+        <!-- 基础镜像 -->
+        <docker.base.image.name>registry.asiainfo.com:5000/openjdk:8u342-slim</docker.base.image.name>
+        <!-- 镜像端口 -->
+        <docker.port>8080</docker.port>
+        <!-- 镜像tag -->
+        <docker.tags.version>latest</docker.tags.version>
+
         <!-- 统一依赖版本 -->
         <spring.boot.version>2.3.0.RELEASE</spring.boot.version>
         <spring.cloud.version>Hoxton.SR7</spring.cloud.version>
@@ -185,6 +196,53 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <!-- 不能升级到0.41.x，除非构建环境有支持对应的cglib -->
                 <version>0.40.3</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>${docker.image.name}:${docker.tags.version}</name>
+                            <build>
+                                <from>${docker.base.image.name}</from>
+                                <maintainer>Asiainfo.com</maintainer>
+                                <env>
+                                    <JAVA_OPTS>'-Dspring.config.location=./conf/bootstrap.yml'</JAVA_OPTS>
+                                </env>
+                                <tags>
+                                    <!-- 跟随项目版本打一个tag -->
+                                    <name>${docker.tags.version}</name>
+                                </tags>
+                                <ports>
+                                    <port>${docker.port}</port>
+                                </ports>
+                                <workdir>/app</workdir>
+                                <cmd>
+                                    java ${JAVA_OPTS} -jar ./${project.build.finalName}.jar
+                                </cmd>
+                                <assemblies>
+                                    <!-- 将配置文件挂载出去 -->
+                                    <assembly>
+                                        <name>app/conf</name>
+                                        <descriptor>inline</descriptor>
+                                        <inline>
+                                            <fileSets>
+                                                <fileSet>
+                                                    <directory>${project.build.directory}/classes</directory>
+                                                    <outputDirectory>.</outputDirectory>
+                                                    <includes>
+                                                        <include>**/*.yml</include>
+                                                    </includes>
+                                                </fileSet>
+                                            </fileSets>
+                                        </inline>
+                                    </assembly>
+                                    <assembly>
+                                        <name>app</name>
+                                        <descriptorRef>artifact</descriptorRef>
+                                    </assembly>
+                                </assemblies>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
             </plugin>
         </plugins>
     </build>

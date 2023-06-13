@@ -1,0 +1,6 @@
+commonLabels:
+  app-group: mcd7
+  app: mock3
+resources:
+  - deployment.yaml
+  - service.yaml
