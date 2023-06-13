@@ -204,7 +204,7 @@
                                 <from>${docker.base.image.name}</from>
                                 <maintainer>funyule@vip.qq.com</maintainer>
                                 <env>
-                                    <JAVA_OPTS>'-Dspring.config.location=./conf/bootstrap.yml'</JAVA_OPTS>
+                                    <JAVA_OPTS>''</JAVA_OPTS>
                                 </env>
                                 <tags>
                                     <!-- 跟随项目版本打一个tag -->
