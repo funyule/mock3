@@ -202,7 +202,7 @@
                             <name>${docker.image.name}:${docker.tags.version}</name>
                             <build>
                                 <from>${docker.base.image.name}</from>
-                                <maintainer>Asiainfo.com</maintainer>
+                                <maintainer>funyule@vip.qq.com</maintainer>
                                 <env>
                                     <JAVA_OPTS>'-Dspring.config.location=./conf/bootstrap.yml'</JAVA_OPTS>
                                 </env>
@@ -228,7 +228,8 @@
                                                     <directory>${project.build.directory}/classes</directory>
                                                     <outputDirectory>.</outputDirectory>
                                                     <includes>
-                                                        <include>**/*.yml</include>
+                                                        <include>*.yml</include>
+                                                        <include>*.json</include>
                                                     </includes>
                                                 </fileSet>
                                             </fileSets>
